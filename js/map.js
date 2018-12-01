@@ -16,7 +16,6 @@ var Photos = [
 ];
 
 var map = document.querySelector('.map');
-var mapFilter = document.querySelector('.map__filters-container');
 var times = [12, 13, 14];
 var offerTitles = [
   'Большая уютная квартира',
@@ -133,6 +132,25 @@ var adList = getAdsArray(ADS_AMOUNT);
 var pinTemplate = document.querySelector('#pin').content.querySelector('button');
 var cardTemplate = document.querySelector('#card').content.querySelector('article');
 
+var createPinsNode = function () {
+  var fragment = document.createDocumentFragment();
+  for (var i = 0; i < ADS_AMOUNT; i++) {
+    var pin = pinTemplate.cloneNode(true);
+    pin.style.left = adList[i].location.x + 'px';
+    pin.style.top = adList[i].location.y + 'px';
+    pin.querySelector('img').src = adList[i].author.avatar;
+    pin.querySelector('img').alt = adList[i].offer.title;
+    pin.onclick = showCard.bind(adList[i]);
+    fragment.appendChild(pin);
+  }
+  return fragment;
+};
+
+var showCard = function () {
+  var card = createCard(this);
+  map.insertBefore(card, document.querySelector('.map__filter-container'));
+};
+
 var fillCardInfo = function (card, offer) {
   card.querySelector('.popup__title').innerText = offer.title;
   card.querySelector('.popup__text--address').innerText = offer.address;
@@ -142,19 +160,6 @@ var fillCardInfo = function (card, offer) {
   card.querySelector('.popup__text--time').innerText = 'Заезд после ' + offer.checkin + ', выезд до ' + offer.checkout;
   card.querySelector('.popup__description').innerText = offer.description;
   return card;
-};
-
-var createPinsNode = function () {
-  var fragment = document.createDocumentFragment();
-  for (var i = 0; i < ADS_AMOUNT; i++) {
-    var pin = pinTemplate.cloneNode(true);
-    pin.style.left = adList[i].location.x + 'px';
-    pin.style.top = adList[i].location.y + 'px';
-    pin.querySelector('img').src = adList[i].author.avatar;
-    pin.querySelector('img').alt = adList[i].offer.title;
-    fragment.appendChild(pin);
-  }
-  return fragment;
 };
 
 var fillCardFeatures = function (card, featuresArray) {
@@ -179,8 +184,7 @@ var fillCardPhotos = function (card, photos) {
   return card;
 };
 
-var createCard = function () {
-  var ad = adList[0];
+var createCard = function (ad) {
   var card = cardTemplate.cloneNode(true);
   fillCardInfo(card, ad.offer);
   fillCardFeatures(card, ad.offer.features);
@@ -189,6 +193,48 @@ var createCard = function () {
   return card;
 };
 
-map.classList.remove('map--faded');
-map.querySelector('.map__pins').appendChild(createPinsNode());
-map.insertBefore(createCard(), mapFilter);
+var filterForm = document.querySelector('.map__filters');
+var adForm = document.querySelector('.ad-form');
+var mapMainPin = document.querySelector('.map__pin--main');
+
+var mapActivate = function () {
+  map.classList.remove('map--faded');
+  adForm.classList.remove('ad-form--disabled');
+  enableForm(adForm);
+  enableForm(filterForm);
+  setPinStartCoordinates();
+};
+
+var setPinStartCoordinates = function () {
+  var pinCoordX = mapMainPin.style.left.replace(/[\D]/g, '');
+  var pinCoordY = mapMainPin.style.top.replace(/[\D]/g, '');
+  adForm.querySelector('input#address').value = pinCoordX + ', ' + pinCoordY;
+};
+
+var enableForm = function (form) {
+  var fieldsetFields = Array.from(form.getElementsByTagName('fieldset'));
+  var selectFields = Array.from(form.getElementsByTagName('select'));
+  var fieldsArray = fieldsetFields.concat(selectFields);
+  for (var i = 0; i < fieldsArray.length; i++) {
+    fieldsArray[i].removeAttribute('disabled');
+  }
+};
+
+var disableForm = function (form) {
+  var fieldsetFields = Array.from(form.getElementsByTagName('fieldset'));
+  var selectFields = Array.from(form.getElementsByTagName('select'));
+  var fieldsArray = fieldsetFields.concat(selectFields);
+  for (var i = 0; i < fieldsArray.length; i++) {
+    fieldsArray[i].setAttribute('disabled', 'disabled');
+  }
+};
+
+var adPins = createPinsNode();
+
+mapMainPin.addEventListener('mouseup', mapActivate);
+mapMainPin.addEventListener('mouseup', function () {
+  document.querySelector('.map__pins').appendChild(adPins);
+});
+
+disableForm(adForm);
+disableForm(filterForm);
