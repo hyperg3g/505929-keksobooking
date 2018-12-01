@@ -147,8 +147,12 @@ var createPinsNode = function () {
 };
 
 var showCard = function () {
-  var card = createCard(this);
-  map.insertBefore(card, document.querySelector('.map__filter-container'));
+  var card = createCard(this); // eslint-disable-line no-invalid-this
+  var prevCard = document.querySelector('.map__card');
+  if (prevCard !== null) {
+    map.removeChild(prevCard);
+  }
+  map.insertBefore(card, document.querySelector('.map__filters-container'));
 };
 
 var fillCardInfo = function (card, offer) {
@@ -190,6 +194,9 @@ var createCard = function (ad) {
   fillCardFeatures(card, ad.offer.features);
   fillCardPhotos(card, ad.offer.photos);
   card.querySelector('.popup__avatar').src = ad.author.avatar;
+  card.querySelector('button').onclick = function () {
+    card.style.display = 'none';
+  };
   return card;
 };
 
