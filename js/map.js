@@ -14,10 +14,8 @@ var Photos = [
   'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
   'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
 ];
-
-var map = document.querySelector('.map');
-var times = [12, 13, 14];
-var offerTitles = [
+var Times = [12, 13, 14];
+var OfferTitles = [
   'Большая уютная квартира',
   'Маленькая неуютная квартира',
   'Огромный прекрасный дворец',
@@ -27,19 +25,19 @@ var offerTitles = [
   'Уютное бунгало далеко от моря',
   'Неуютное бунгало по колено в воде'
 ];
-var houseTypes = [
+var HouseTypes = [
   'palace',
   'flat',
   'house',
   'bugalo'
 ];
-var houseTypesMeaning = [
+var HouseTypesMeaning = [
   'Дворец',
   'Квартира',
   'Дом',
   'Бунгало'
 ];
-var features = [
+var Features = [
   'wifi',
   'dishwasher',
   'parking',
@@ -48,6 +46,7 @@ var features = [
   'conditioner'
 ];
 
+var map = document.querySelector('.map');
 
 var removeElementFromArray = function (element, array) {
   return array.splice(array.indexOf(element), 1);
@@ -63,13 +62,13 @@ var getRandomElementFromArray = function (array) {
 };
 
 var getTitle = function () {
-  var title = getRandomElementFromArray(offerTitles);
-  removeElementFromArray(title, offerTitles);
+  var title = getRandomElementFromArray(OfferTitles);
+  removeElementFromArray(title, OfferTitles);
   return title;
 };
 
 var getHouseFeatures = function () {
-  var featuresList = features;
+  var featuresList = Features;
   var houseFeatures = new Array(getRandomNumberInRange(1, featuresList.length));
   for (var i = 0; i < houseFeatures.length; i++) {
     var feature = getRandomElementFromArray(featuresList);
@@ -91,11 +90,11 @@ var getOfferValue = function (location) {
     'title': getTitle(),
     'address': location.x + ', ' + location.y,
     'price': getRandomNumberInRange(MIN_PRICE, MAX_PRICE),
-    'type': getRandomElementFromArray(houseTypes),
+    'type': getRandomElementFromArray(HouseTypes),
     'rooms': numberOfRooms,
     'guests': getRandomNumberInRange(1, numberOfRooms),
-    'checkin': getRandomElementFromArray(times) + ':00',
-    'checkout': getRandomElementFromArray(times) + ':00',
+    'checkin': getRandomElementFromArray(Times) + ':00',
+    'checkout': getRandomElementFromArray(Times) + ':00',
     'features': getHouseFeatures(),
     'description': '',
     'photos': Photos
@@ -159,7 +158,7 @@ var fillCardInfo = function (card, offer) {
   card.querySelector('.popup__title').innerText = offer.title;
   card.querySelector('.popup__text--address').innerText = offer.address;
   card.querySelector('.popup__text--price').innerText = offer.price + '₽/ночь';
-  card.querySelector('.popup__type').innerText = houseTypesMeaning[houseTypes.indexOf(offer.type)];
+  card.querySelector('.popup__type').innerText = HouseTypesMeaning[HouseTypes.indexOf(offer.type)];
   card.querySelector('.popup__text--capacity').innerText = offer.rooms + ' комнаты для ' + offer.guests + ' гостей';
   card.querySelector('.popup__text--time').innerText = 'Заезд после ' + offer.checkin + ', выезд до ' + offer.checkout;
   card.querySelector('.popup__description').innerText = offer.description;
