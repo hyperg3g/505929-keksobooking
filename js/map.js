@@ -208,12 +208,12 @@ var mapActivate = function () {
   adForm.classList.remove('ad-form--disabled');
   enableForm(adForm);
   enableForm(filterForm);
-  setPinStartCoordinates();
+  setPinCoordinates(mapMainPin);
 };
 
-var setPinStartCoordinates = function () {
-  var pinCoordX = mapMainPin.style.left.replace(/[\D]/g, '');
-  var pinCoordY = mapMainPin.style.top.replace(/[\D]/g, '');
+var setPinCoordinates = function (pin) {
+  var pinCoordX = pin.style.left.replace(/[\D]/g, '');
+  var pinCoordY = pin.style.top.replace(/[\D]/g, '');
   adForm.querySelector('input#address').value = pinCoordX + ', ' + pinCoordY;
 };
 
@@ -235,12 +235,56 @@ var disableForm = function (form) {
   }
 };
 
+var getMouseCoordsOnMap = function (mouseEvt) {
+  var mapCoords = map.getBoundingClientRect();
+  var mouseCoords = {
+    x: mouseEvt.clientX - mapCoords.x,
+    y: mouseEvt.clientY - mapCoords.y
+  };
+  return mouseCoords;
+};
+
+mapMainPin.addEventListener('mousedown', function (evt) {
+  evt.preventDefault();
+  mapActivate();
+
+  var startCoords = getMouseCoordsOnMap(evt);
+
+  var onMouseMove = function (moveEvt) {
+    moveEvt.preventDefault();
+    setPinCoordinates(mapMainPin);
+
+    var moveCoords = getMouseCoordsOnMap(moveEvt);
+    var shift = {
+      x: startCoords.x - moveCoords.x,
+      y: startCoords.y - moveCoords.y
+    };
+
+    startCoords = {
+      x: moveCoords.x,
+      y: moveCoords.y
+    };
+
+    mapMainPin.style.top = (mapMainPin.offsetTop - shift.y) + 'px';
+    mapMainPin.style.left = (mapMainPin.offsetLeft - shift.x) + 'px';
+  };
+
+  var onMouseUp = function (upEvt) {
+    upEvt.preventDefault();
+
+    mapMainPin.removeEventListener('mousemove', onMouseMove);
+    mapMainPin.removeEventListener('mouseup', onMouseUp);
+  };
+
+  mapMainPin.addEventListener('mousemove', onMouseMove);
+  mapMainPin.addEventListener('mouseup', onMouseUp);
+});
+
 var adPins = createPinsNode();
 
-mapMainPin.addEventListener('mouseup', mapActivate);
-mapMainPin.addEventListener('mouseup', function () {
-  document.querySelector('.map__pins').appendChild(adPins);
-});
+// mapMainPin.addEventListener('mouseup', function () {
+//   document.querySelector('.map__pins').appendChild(adPins);
+// });
 
 disableForm(adForm);
 disableForm(filterForm);
