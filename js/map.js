@@ -244,14 +244,38 @@ var getMouseCoordsOnMap = function (mouseEvt) {
   return mouseCoords;
 };
 
+var getPinStyleValue = function (pin, shift) {
+  var pinSize = pin.getBoundingClientRect();
+  var leftValue = pin.offsetLeft - shift.x;
+  var topValue = pin.offsetTop - shift.y;
+
+  if (topValue < MAP_MIN_Y) {
+    topValue = MAP_MIN_Y;
+  } else if (topValue > MAP_MAX_Y) {
+    topValue = MAP_MAX_Y;
+  }
+
+  if (leftValue < 0) {
+    leftValue = 0;
+  } else if (leftValue > MAP_MAX_X - pinSize.width) {
+    leftValue = MAP_MAX_X - pinSize.width;
+  }
+
+  return {
+    x: leftValue,
+    y: topValue
+  };
+};
+
 mapMainPin.addEventListener('mousedown', function (evt) {
   evt.preventDefault();
-  mapActivate();
 
   var startCoords = getMouseCoordsOnMap(evt);
 
   var onMouseMove = function (moveEvt) {
     moveEvt.preventDefault();
+    document.querySelector('.map__pins').appendChild(adPins);
+    mapActivate();
     setPinCoordinates(mapMainPin);
 
     var moveCoords = getMouseCoordsOnMap(moveEvt);
@@ -265,8 +289,9 @@ mapMainPin.addEventListener('mousedown', function (evt) {
       y: moveCoords.y
     };
 
-    mapMainPin.style.top = (mapMainPin.offsetTop - shift.y) + 'px';
-    mapMainPin.style.left = (mapMainPin.offsetLeft - shift.x) + 'px';
+    var newStyleCoords = getPinStyleValue(mapMainPin, shift);
+    mapMainPin.style.top = newStyleCoords.y + 'px';
+    mapMainPin.style.left = newStyleCoords.x + 'px';
   };
 
   var onMouseUp = function (upEvt) {
@@ -281,10 +306,6 @@ mapMainPin.addEventListener('mousedown', function (evt) {
 });
 
 var adPins = createPinsNode();
-
-// mapMainPin.addEventListener('mouseup', function () {
-//   document.querySelector('.map__pins').appendChild(adPins);
-// });
 
 disableForm(adForm);
 disableForm(filterForm);
