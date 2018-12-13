@@ -267,6 +267,8 @@ var getPinStyleValue = function (pin, shift) {
   };
 };
 
+var mapActivated = false;
+
 mapMainPin.addEventListener('mousedown', function (evt) {
   evt.preventDefault();
 
@@ -274,22 +276,29 @@ mapMainPin.addEventListener('mousedown', function (evt) {
 
   var onMouseMove = function (moveEvt) {
     moveEvt.preventDefault();
-    document.querySelector('.map__pins').appendChild(adPins);
-    mapActivate();
     setPinCoordinates(mapMainPin);
+
+    if (!mapActivated) {
+      var adPins = createPinsNode();
+      mapActivated = true;
+
+      mapActivate();
+      document.querySelector('.map__pins').appendChild(adPins);
+    }
 
     var moveCoords = getMouseCoordsOnMap(moveEvt);
     var shift = {
       x: startCoords.x - moveCoords.x,
       y: startCoords.y - moveCoords.y
     };
+    var newStyleCoords = getPinStyleValue(mapMainPin, shift);
 
     startCoords = {
       x: moveCoords.x,
       y: moveCoords.y
     };
 
-    var newStyleCoords = getPinStyleValue(mapMainPin, shift);
+    mapMainPin.style.zIndex += '1';
     mapMainPin.style.top = newStyleCoords.y + 'px';
     mapMainPin.style.left = newStyleCoords.x + 'px';
   };
@@ -297,15 +306,14 @@ mapMainPin.addEventListener('mousedown', function (evt) {
   var onMouseUp = function (upEvt) {
     upEvt.preventDefault();
 
-    mapMainPin.removeEventListener('mousemove', onMouseMove);
-    mapMainPin.removeEventListener('mouseup', onMouseUp);
+    mapMainPin.style.zIndex = '0';
+    map.removeEventListener('mousemove', onMouseMove);
+    window.removeEventListener('mouseup', onMouseUp);
   };
 
-  mapMainPin.addEventListener('mousemove', onMouseMove);
-  mapMainPin.addEventListener('mouseup', onMouseUp);
+  map.addEventListener('mousemove', onMouseMove);
+  window.addEventListener('mouseup', onMouseUp);
 });
-
-var adPins = createPinsNode();
 
 disableForm(adForm);
 disableForm(filterForm);
