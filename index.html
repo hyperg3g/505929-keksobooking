@@ -112,10 +112,10 @@
         <fieldset class="ad-form__element">
           <label class="ad-form__label" for="type">Тип жилья</label>
           <select id="type" name="type">
-            <option value="bungalo" onclick="changeMinPrice(0)">Бунгало</option>
-            <option value="flat" onclick="changeMinPrice(1000)" selected>Квартира</option>
-            <option value="house" onclick="changeMinPrice(5000)">Дом</option>
-            <option value="palace" onclick="changeMinPrice(10000)">Дворец</option>
+            <option value="bungalo" onclick="window.validation.changeMinPrice(0)">Бунгало</option>
+            <option value="flat" onclick="window.validation.changeMinPrice(1000)" selected>Квартира</option>
+            <option value="house" onclick="window.validation.changeMinPrice(5000)">Дом</option>
+            <option value="palace" onclick="window.validation.changeMinPrice(10000)">Дворец</option>
           </select>
         </fieldset>
         <fieldset class="ad-form__element">
@@ -243,6 +243,8 @@
     </div>
   </template>
 
+  <script src="js/data.js"></script>
+  <script src="js/form.js"></script>
   <script src="js/map.js"></script>
   <script src="js/validation.js"></script>
 
