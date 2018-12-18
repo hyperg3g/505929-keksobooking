@@ -1,6 +1,8 @@
 'use strict';
 
 (function () {
+  var ESC_KEYCODE = 27;
+
   var map = document.querySelector('.map');
   var filterForm = document.querySelector('.map__filters');
   var adForm = document.querySelector('.ad-form');
@@ -93,7 +95,7 @@
   map.addEventListener('keydown', function (evt) {
     evt.preventDefault();
     var card = document.querySelector('.map__card');
-    if (card !== null) {
+    if (card !== null && evt.keyCode === ESC_KEYCODE) {
       card.style.display = 'none';
     }
   });
