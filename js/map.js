@@ -90,6 +90,14 @@
     window.addEventListener('mouseup', onMouseUp);
   });
 
+  map.addEventListener('keydown', function (evt) {
+    evt.preventDefault();
+    var card = document.querySelector('.map__card');
+    if (card !== null) {
+      card.style.display = 'none';
+    }
+  });
+
   window.form.disableForm(adForm);
   window.form.disableForm(filterForm);
   window.backend.load(successHandler, errorHandler);
