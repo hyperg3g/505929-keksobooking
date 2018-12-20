@@ -22,11 +22,12 @@
           pinCardOff(pin);
         };
 
-        pin.addEventListener('keydown', function (evt) {
+        pin.addEventListener('keydown', function onEscPress(evt) {
           evt.preventDefault();
           if (evt.keyCode === ESC_KEYCODE) {
             pinCardOff(pin);
             pin.blur();
+            pin.removeEventListener('keydown', onEscPress);
           }
         });
 
