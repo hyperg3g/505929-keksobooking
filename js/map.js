@@ -10,6 +10,7 @@
 
   var successHandler = function (ads) {
     window.adList = ads;
+    window.form.enableForm(filterForm);
   };
 
   var errorTemplate = document.querySelector('#error').content.querySelector('div');
@@ -31,7 +32,6 @@
     map.classList.remove('map--faded');
     adForm.classList.remove('ad-form--disabled');
     window.form.enableForm(adForm);
-    window.form.enableForm(filterForm);
     window.pin.setPinCoordinates(mapMainPin);
   };
 
@@ -56,7 +56,7 @@
       window.pin.setPinCoordinates(mapMainPin);
 
       if (!mapActivated) {
-        var adPins = window.pin.createPinsNode();
+        var adPins = window.pin.createPinsNode(window.adList);
         mapActivated = true;
 
         mapActivate();

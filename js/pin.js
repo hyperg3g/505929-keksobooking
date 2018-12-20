@@ -17,10 +17,10 @@
     return pin;
   };
 
-  var createPinsNode = function () {
+  var createPinsNode = function (ads) {
     var fragment = document.createDocumentFragment();
-    for (var i = 0; i < window.adList.length; i++) {
-      var newPin = createPin(window.adList[i]);
+    for (var i = 0; i < ads.length; i++) {
+      var newPin = createPin(ads[i]);
       if (newPin !== undefined) {
         fragment.appendChild(newPin);
       }
