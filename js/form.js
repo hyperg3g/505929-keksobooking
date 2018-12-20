@@ -1,6 +1,8 @@
 'use strict';
 
 (function () {
+  var DEBOUNCE_INTERVAL = 500;
+
   var filterForm = document.querySelector('.map__filters');
   var house = {
     type: filterForm.querySelector('#housing-type').value,
@@ -78,8 +80,15 @@
     evt.preventDefault();
     updateProperties(evt);
 
+    var lastTimeout;
     var filtered = window.adList.filter(comparer);
-    updatePins(filtered);
+
+    if (lastTimeout) {
+      window.clearTimeout(lastTimeout);
+    }
+    lastTimeout = window.setTimeout(function () {
+      updatePins(filtered);
+    }, DEBOUNCE_INTERVAL);
   });
 
   window.form = {
