@@ -1,6 +1,8 @@
 'use strict';
 
 (function () {
+  var ESC_KEYCODE = 27;
+
   var adForm = document.querySelector('.ad-form');
   var priceField = document.querySelector('#price');
   var timeinField = document.querySelector('#timein');
@@ -58,27 +60,52 @@
 
     adForm.reset();
     main.appendChild(success);
-    setTimeout(function () {
+
+    var mapResetHandler = function () {
+      window.map.mapDeactivate();
       main.removeChild(success);
-    }, 1500);
+    };
+
+    success.addEventListener('click', mapResetHandler);
+
+    window.addEventListener('keydown', function mapResetOnEscPressed(evt) {
+      evt.preventDefault();
+      if (evt.keyCode === ESC_KEYCODE) {
+        mapResetHandler();
+      }
+      window.removeEventListener('keydown', mapResetOnEscPressed);
+    });
   };
 
   var errorHandler = function (message) {
     var error = errorTemplate.cloneNode(true);
     var retryButton = error.querySelector('button');
 
+    var mapResetHandler = function () {
+      main.removeChild(error);
+    };
+
     main.appendChild(error);
     error.querySelector('.error__message').innerText = 'Ошибка загрузки объявления: ' + message;
-    retryButton.addEventListener('click', function (evt) {
+
+    error.addEventListener('click', mapResetHandler);
+    retryButton.addEventListener('click', mapResetHandler);
+    window.addEventListener('keydown', function mapResetOnEscPressed(evt) {
       evt.preventDefault();
-      main.removeChild(error);
+      if (evt.keyCode === ESC_KEYCODE) {
+        mapResetHandler();
+      }
+      window.removeEventListener('keydown', mapResetOnEscPressed);
     });
+
   };
 
   adForm.addEventListener('submit', function (evt) {
     evt.preventDefault();
     window.backend.save(new FormData(adForm), successHandler, errorHandler);
   });
+
+  adForm.querySelector('.ad-form__reset').addEventListener('click', window.map.mapDeactivate);
 
   changeMinPrice(1000);
 

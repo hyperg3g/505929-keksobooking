@@ -1,12 +1,15 @@
 'use strict';
 
 (function () {
-  var ESC_KEYCODE = 27;
-
   var map = document.querySelector('.map');
+  var mapPins = document.querySelector('.map__pins');
   var filterForm = document.querySelector('.map__filters');
   var adForm = document.querySelector('.ad-form');
   var mapMainPin = document.querySelector('.map__pin--main');
+  var MainPinCoord = {
+    X: mapMainPin.style.left,
+    Y: mapMainPin.style.top
+  };
 
   var successHandler = function (ads) {
     window.adList = ads;
@@ -26,6 +29,31 @@
       evt.preventDefault();
       location.reload();
     });
+  };
+
+  var mapClear = function () {
+    var pinsNode = Array.from(document.getElementsByClassName('map__pin'));
+
+    window.card.removeCard();
+    for (var i = 0; i < pinsNode.length; i++) {
+      if (i === 0) {
+        mapMainPin.style.left = MainPinCoord.X;
+        mapMainPin.style.top = MainPinCoord.Y;
+      } else {
+        mapPins.removeChild(pinsNode[i]);
+      }
+    }
+  };
+
+  var mapDeactivate = function () {
+    mapActivated = false;
+
+    mapClear();
+    map.classList.add('map--faded');
+    adForm.classList.add('ad-form--disabled');
+    window.form.disableForm(adForm);
+    window.form.disableForm(filterForm);
+    scroll(0, 0);
   };
 
   var mapActivate = function () {
@@ -60,7 +88,7 @@
         mapActivated = true;
 
         mapActivate();
-        document.querySelector('.map__pins').appendChild(adPins);
+        mapPins.appendChild(adPins);
       }
 
       var moveCoords = getMouseCoordsOnMap(moveEvt);
@@ -92,15 +120,11 @@
     window.addEventListener('mouseup', onMouseUp);
   });
 
-  map.addEventListener('keydown', function (evt) {
-    evt.preventDefault();
-    var card = document.querySelector('.map__card');
-    if (card !== null && evt.keyCode === ESC_KEYCODE) {
-      card.style.display = 'none';
-    }
-  });
-
   window.form.disableForm(adForm);
   window.form.disableForm(filterForm);
   window.backend.load(successHandler, errorHandler);
+
+  window.map = {
+    mapDeactivate: mapDeactivate
+  };
 })();
