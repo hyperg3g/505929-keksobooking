@@ -5,8 +5,8 @@
 
   var adForm = document.querySelector('.ad-form');
   var priceField = document.querySelector('#price');
-  var timeinField = document.querySelector('#timein');
-  var timeoutField = document.querySelector('#timeout');
+  var timeInField = document.querySelector('#timein');
+  var timeOutField = document.querySelector('#timeout');
   var roomField = document.querySelector('#room_number');
   var capacityField = document.querySelector('#capacity');
 
@@ -21,12 +21,12 @@
     }
   };
 
-  timeinField.onchange = function () {
-    timeoutField.value = timeinField.value;
+  timeInField.onchange = function () {
+    timeOutField.value = timeInField.value;
   };
 
-  timeoutField.onchange = function () {
-    timeinField.value = timeoutField.value;
+  timeOutField.onchange = function () {
+    timeInField.value = timeOutField.value;
   };
 
   roomField.onchange = function () {

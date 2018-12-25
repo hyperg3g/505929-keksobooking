@@ -4,7 +4,7 @@
   var DEBOUNCE_INTERVAL = 500;
 
   var filterForm = document.querySelector('.map__filters');
-  var house = {
+  var House = {
     type: filterForm.querySelector('#housing-type').value,
     price: filterForm.querySelector('#housing-price').value,
     rooms: filterForm.querySelector('#housing-rooms').value,
@@ -15,18 +15,18 @@
   var enableForm = function (form) {
     var fieldsetFields = Array.from(form.getElementsByTagName('fieldset'));
     var selectFields = Array.from(form.getElementsByTagName('select'));
-    var fieldsArray = fieldsetFields.concat(selectFields);
-    for (var i = 0; i < fieldsArray.length; i++) {
-      fieldsArray[i].removeAttribute('disabled');
+    var fields = fieldsetFields.concat(selectFields);
+    for (var i = 0; i < fields.length; i++) {
+      fields[i].removeAttribute('disabled');
     }
   };
 
   var disableForm = function (form) {
     var fieldsetFields = Array.from(form.getElementsByTagName('fieldset'));
     var selectFields = Array.from(form.getElementsByTagName('select'));
-    var fieldsArray = fieldsetFields.concat(selectFields);
-    for (var i = 0; i < fieldsArray.length; i++) {
-      fieldsArray[i].setAttribute('disabled', 'disabled');
+    var fields = fieldsetFields.concat(selectFields);
+    for (var i = 0; i < fields.length; i++) {
+      fields[i].setAttribute('disabled', 'disabled');
     }
   };
 
@@ -34,14 +34,14 @@
     var target = evt.target;
     var targetKey = target.name.replace('housing-', '');
     if (target.tagName === 'INPUT') {
-      var elemIndex = house[targetKey].indexOf(target.value);
+      var elemIndex = House[targetKey].indexOf(target.value);
       if (elemIndex === -1) {
-        house[targetKey].push(target.value);
+        House[targetKey].push(target.value);
       } else {
-        house[targetKey].splice(elemIndex, 1);
+        House[targetKey].splice(elemIndex, 1);
       }
     } else {
-      house[targetKey] = target.value;
+      House[targetKey] = target.value;
     }
   };
 
@@ -53,26 +53,27 @@
 
   var updatePins = function (ads) {
     var mapPins = document.querySelector('.map__pins');
-    var pinsNode = Array.from(document.getElementsByClassName('map__pin'));
+    var pins = Array.from(document.getElementsByClassName('map__pin'));
     var prevCard = document.querySelector('.map__card');
-    for (var i = 1; i < pinsNode.length; i++) {
-      mapPins.removeChild(pinsNode[i]);
+    for (var i = 1; i < pins.length; i++) {
+      mapPins.removeChild(pins[i]);
     }
 
     if (prevCard !== null) {
       document.querySelector('.map').removeChild(prevCard);
     }
+
     var newPinsNode = window.pin.createPinsNode(ads);
     mapPins.appendChild(newPinsNode);
   };
 
-  var comparer = function (elem) {
+  var adCompare = function (elem) {
     return (
-      (elem.offer.type === house.type || house.type === 'any') &&
-      (elem.offer.rooms === Number(house.rooms) || house.rooms === 'any') &&
-      (elem.offer.guests === Number(house.guests) || house.guests === 'any') &&
-      (elem.offer.price >= window.data.price[house.price].from && elem.offer.price <= window.data.price[house.price].to) &&
-      (isContainItems(house.features, elem.offer.features) || house.features === [])
+      (elem.offer.type === House.type || House.type === 'any') &&
+      (elem.offer.rooms === Number(House.rooms) || House.rooms === 'any') &&
+      (elem.offer.guests === Number(House.guests) || House.guests === 'any') &&
+      (elem.offer.price >= window.data.Price[House.price].from && elem.offer.price <= window.data.Price[House.price].to) &&
+      (isContainItems(House.features, elem.offer.features) || House.features === [])
     );
   };
 
@@ -81,7 +82,7 @@
     updateProperties(evt);
 
     var lastTimeout;
-    var filtered = window.adList.filter(comparer);
+    var filtered = window.adList.filter(adCompare);
 
     if (lastTimeout) {
       window.clearTimeout(lastTimeout);

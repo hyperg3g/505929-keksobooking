@@ -27,7 +27,7 @@
     maxMapX: MAP_MAX_X,
     maxMapY: MAP_MAX_Y,
     minMapY: MAP_MIN_Y,
-    houseTypes: HOUSE_TYPES,
-    price: Price
+    HOUSE_TYPES: HOUSE_TYPES,
+    Price: Price
   };
 })();
