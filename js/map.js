@@ -32,15 +32,16 @@
   };
 
   var mapClear = function () {
-    var pinsNode = Array.from(document.getElementsByClassName('map__pin'));
+    var pins = Array.from(document.getElementsByClassName('map__pin'));
 
     window.card.removeCard();
-    for (var i = 0; i < pinsNode.length; i++) {
+    for (var i = 0; i < pins.length; i++) {
       if (i === 0) {
         mapMainPin.style.left = MainPinCoord.X;
         mapMainPin.style.top = MainPinCoord.Y;
+        window.pin.setPinCoordinates(mapMainPin);
       } else {
-        mapPins.removeChild(pinsNode[i]);
+        mapPins.removeChild(pins[i]);
       }
     }
   };

@@ -2,11 +2,13 @@
 
 (function () {
   var ESC_KEYCODE = 27;
+  var ADS_AMOUNT = 5;
 
   var pinTemplate = document.querySelector('#pin').content.querySelector('button');
 
   var createPin = function (ad) {
     var pin = pinTemplate.cloneNode(true);
+
     if (ad.offer === undefined) {
       pin = undefined;
     } else {
@@ -16,25 +18,30 @@
       pin.querySelector('img').alt = ad.offer.title;
 
       pin.addEventListener('click', function () {
-        var card = window.card.createCard(ad);
+        var lastActivePin = document.querySelector('.map__pin--active');
 
-        card.querySelector('button').onclick = function () {
-          pinCardOff(pin);
-        };
+        if (lastActivePin !== pin) {
+          var card = window.card.createCard(ad);
+          var onEscPress = function (evt) {
+            evt.preventDefault();
+            if (evt.keyCode === ESC_KEYCODE) {
+              pinCardOff(pin);
+              pin.blur();
+              window.removeEventListener('keydown', onEscPress);
+            }
+          };
 
-        pin.addEventListener('keydown', function onEscPress(evt) {
-          evt.preventDefault();
-          if (evt.keyCode === ESC_KEYCODE) {
+          card.querySelector('button').onclick = function () {
             pinCardOff(pin);
-            pin.blur();
-            pin.removeEventListener('keydown', onEscPress);
-          }
-        });
+            window.removeEventListener('keydown', onEscPress);
+          };
 
-        if (pin.classList.contains('map__pin--active')) {
-          pinCardOff(pin);
-        } else {
           pinCardOn(pin, card);
+          if (lastActivePin) {
+            lastActivePin.classList.remove('map__pin--active');
+          }
+
+          window.addEventListener('keydown', onEscPress);
         }
       });
     }
@@ -54,7 +61,7 @@
 
   var createPinsNode = function (ads) {
     var fragment = document.createDocumentFragment();
-    for (var i = 0; i < ads.length; i++) {
+    for (var i = 0; i < ADS_AMOUNT && i < ads.length; i++) {
       var newPin = createPin(ads[i]);
       if (newPin !== undefined) {
         fragment.appendChild(newPin);
@@ -87,8 +94,8 @@
   };
 
   var setPinCoordinates = function (pin) {
-    var pinCoordX = pin.style.left.replace(/[\D]/g, '');
-    var pinCoordY = pin.style.top.replace(/[\D]/g, '');
+    var pinCoordX = Number(pin.style.left.replace(/[\D]/g, '')) + Math.floor(pin.offsetWidth / 2);
+    var pinCoordY = Number(pin.style.top.replace(/[\D]/g, '')) + pin.offsetHeight;
     document.querySelector('input#address').value = pinCoordX + ', ' + pinCoordY;
   };
 
