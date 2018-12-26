@@ -1,6 +1,8 @@
 'use strict';
 
 (function () {
+  var ENTER_KEYCODE = 13;
+
   var map = document.querySelector('.map');
   var mapPins = document.querySelector('.map__pins');
   var filterForm = document.querySelector('.map__filters');
@@ -75,11 +77,7 @@
 
   var mapActivated = false;
 
-  mapMainPin.addEventListener('mousedown', function (evt) {
-    evt.preventDefault();
-
-    var startCoords = getMouseCoordsOnMap(evt);
-
+  var isMapActive = function () {
     if (!mapActivated) {
       var adPins = window.pin.createPinsNode(window.adList);
       mapActivated = true;
@@ -87,6 +85,20 @@
       mapActivate();
       mapPins.appendChild(adPins);
     }
+  };
+
+  mapMainPin.addEventListener('keydown', function onMainPinEnterPress(evt) {
+    if (evt.keyCode === ENTER_KEYCODE) {
+      isMapActive();
+      mapMainPin.removeEventListener('keydown', onMainPinEnterPress);
+    }
+  });
+
+  mapMainPin.addEventListener('mousedown', function (evt) {
+    evt.preventDefault();
+    isMapActive();
+
+    var startCoords = getMouseCoordsOnMap(evt);
 
     var onMouseMove = function (moveEvt) {
       moveEvt.preventDefault();
