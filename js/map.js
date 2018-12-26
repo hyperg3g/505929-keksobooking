@@ -80,17 +80,17 @@
 
     var startCoords = getMouseCoordsOnMap(evt);
 
+    if (!mapActivated) {
+      var adPins = window.pin.createPinsNode(window.adList);
+      mapActivated = true;
+
+      mapActivate();
+      mapPins.appendChild(adPins);
+    }
+
     var onMouseMove = function (moveEvt) {
       moveEvt.preventDefault();
       window.pin.setPinCoordinates(mapMainPin);
-
-      if (!mapActivated) {
-        var adPins = window.pin.createPinsNode(window.adList);
-        mapActivated = true;
-
-        mapActivate();
-        mapPins.appendChild(adPins);
-      }
 
       var moveCoords = getMouseCoordsOnMap(moveEvt);
       var shift = {
