@@ -23,7 +23,6 @@
         if (lastActivePin !== pin) {
           var card = window.card.createCard(ad);
           var onEscPress = function (evt) {
-            evt.preventDefault();
             if (evt.keyCode === ESC_KEYCODE) {
               pinCardOff(pin);
               pin.blur();
